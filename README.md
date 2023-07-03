@@ -11,6 +11,12 @@
 2.导出数据集接口，可二次开发定义自己的数据集导出类型<br>
 3.基于数据库储存<br>
 
+### 现有功能设计
+
+产品原型：
+
+  [https://mastergo.com/goto/s0Qw8Xbo?file=98653253651947](https://mastergo.com/goto/s0QAg8zo?file=98653253651947 邀请您进入《MainUi》，点击链接开始协作)https://mastergo.com/goto/s0QAg8zo?file=98653253651947 邀请您进入《MainUi》
+
 ### 开发说明
 
 采用python开发基于flask框架作为功能接口，采用sqlachemy操作数据库，通过vue搭建的界面进行数据管理
