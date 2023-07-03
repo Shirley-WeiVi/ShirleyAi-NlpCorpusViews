@@ -14,7 +14,8 @@
 ### 现有功能设计
 
 产品原型：
-[[https://mastergo.com/goto/s0Qw8Xbo?file=98653253651947]( 邀请您进入《MainUi》，点击链接开始协作)https://mastergo.com/goto/s0QAg8zo?file=98653253651947 邀请您进入《MainUi》](https://mastergo.com/goto/s0QAg8zo?file=98653253651947)
+
+https://mastergo.com/goto/s0QKpitj?page_id=M&file=98653253651947 邀请您进入《MainUi》，点击链接开始协作
 
 ### 开发说明
 
