@@ -17,6 +17,9 @@
 
 https://mastergo.com/goto/s0QKpitj?page_id=M&file=98653253651947 邀请您进入《MainUi》，点击链接开始协作
 
+### 项目技术求助
+[https://www.zhihu.com/question/610213799]ShirleyAi-我想把女朋友的聊天记录训练成NLP Ai，语料该如何制作？
+
 ### 开发说明
 
 采用python开发基于flask框架作为功能接口，采用sqlachemy操作数据库，通过vue搭建的界面进行数据管理
