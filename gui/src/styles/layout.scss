@@ -1,0 +1,106 @@
+.layout-width{
+  width: calc(100% - 50px);
+  margin: 0 auto;
+}
+
+
+.layout-header{
+  background-color: #1F1F1F;
+  height: 64px;
+  border-bottom: 2px solid #264AFF;
+  .logo{
+    float: left;
+    .ShirleyAi{
+      line-height: 64px;
+      font-weight: bold;
+      font-size: 24px;
+      color: #ffffff;
+    }
+    .NlpCorpusViews{
+      margin-left: 10px;
+      line-height: 64px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #ffffff;
+    }
+  }
+  .nav{
+    margin-left: 30%;
+    .nav-item{
+      float: left;
+      padding-left: 5px;
+      padding-right: 5px;
+      margin-right: 15px;
+      margin-left: 15px;
+      line-height: 52px;
+      font-size: 14px;
+      color: #868686;
+      margin-top: 8px;
+      cursor: pointer;
+      user-select:none;
+    }
+    .nav-item-activate{
+      border-bottom: 4px solid #264AFF;
+      color: #ffffff;
+    }
+  }
+  .toOutputPage{
+    font-size: 14px;
+    line-height: 64px;
+    float: right;
+    color: #ffffff;
+    cursor: pointer;
+    user-select:none;
+  }
+  .toOutputPage-activate{
+
+    line-height: 56px;
+    margin-top: 4px;
+    border-bottom: 4px solid #00ffb3;
+  }
+  .about{
+    margin-left: 25px;
+    font-size: 14px;
+    line-height: 64px;
+    float: right;
+    color: #ffffff;
+    cursor: pointer;
+    user-select:none;
+  }
+  .about_popot{
+    z-index: 2000;
+    user-select:none;
+    padding-top: 1px;
+    position: absolute;
+    right: 25px;
+    top: 50px;
+    width: 200px;
+    border-radius: 5px;
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 12px;
+    .item{
+      background-color: #0e0e0e;
+      width: calc(100% - 27px);
+      line-height: 40px;
+      border: 1px solid #2e3763;
+      padding-left: 25px;
+      margin-top: -1px;
+      a{color: #ffffff;}
+    }
+  }
+}
+
+
+.layout-footer{
+}
+
+
+.layout-main{
+}
+
+
+a, li, ul{
+    text-decoration:none;
+    list-style-type:none;
+  }
