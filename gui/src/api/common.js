@@ -62,9 +62,25 @@ export function session_delete(data) {
 
 // data ----------------------------------------------------------------------------
 
-export function data_create(data) {
+export function data_text_create(data) {
     return request({
-        url: '/CorpusApi/data/create',
+        url: '/CorpusApi/data/text/create',
+        method: 'post',
+        data: data
+    })
+}
+
+export function data_emoji_create(data) {
+    return request({
+        url: '/CorpusApi/data/emoji/create',
+        method: 'post',
+        data: data
+    })
+}
+
+export function data_image_create(data) {
+    return request({
+        url: '/CorpusApi/data/image/create',
         method: 'post',
         data: data
     })

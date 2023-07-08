@@ -54,11 +54,25 @@ def session_delete(request):
 
 # ----------------------------------------------------------
 
-@CorpusApi.route('/data/create', methods=["POST"])
+@CorpusApi.route('/data/text/create', methods=["POST"])
 @MiddlewareNormal
-def data_create(request):
+def data_text_create(request):
     """normaldata"""
-    return data_views.data_create(request.json)
+    return data_views.data_text_create(request.json)
+
+
+@CorpusApi.route('/data/emoji/create', methods=["POST"])
+@MiddlewareNormal
+def data_emoji_create(request):
+    """normaldata"""
+    return data_views.data_emoji_create(request.json)
+
+
+@CorpusApi.route('/data/image/create', methods=["POST"])
+@MiddlewareNormal
+def data_image_create(request):
+    """normaldata"""
+    return data_views.data_image_create(request.json)
 
 
 @CorpusApi.route('/data/query', methods=["POST"])

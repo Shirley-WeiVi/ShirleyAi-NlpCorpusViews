@@ -6,4 +6,4 @@ class ProductionConfig:
     RUNSERVER_PORT = 9001
     RUNSERVER_IP = '127.0.0.1'
     DEBUG = True
-    STATIC_LOADPATH = "http://" + str(RUNSERVER_IP) + ":" + str(RUNSERVER_PORT) + "/apiService/Static"
+    STATIC_LOADPATH = "http://" + str(RUNSERVER_IP) + ":" + str(RUNSERVER_PORT) + "/static"

@@ -1,70 +1,91 @@
 from app.Models import CorpusIndex, CorpusSessionIndex, CorpusData
 import json
 import datetime
+import os
+import shutil
+
+def split_list_into_pairs(lst):
+    return [lst[i:i+2] for i in range(0, len(lst), 2)]
 
 def outdataset(request):
 
-    validation_dataset = []
+    out = []
+    filename = datetime.datetime.strftime(datetime.datetime.now(), "corpus_%Y%m%d_%H%M%S")
+    os.makedirs(os.path.join(os.path.abspath('./save/' + filename + '/' )))
+    os.makedirs(os.path.join(os.path.abspath('./save/' + filename + '/msg_emoji' )))
+    os.makedirs(os.path.join(os.path.abspath('./save/' + filename + '/msg_image' )))
 
     # 取出正常的索引
     index_data = CorpusIndex.query.filter(CorpusIndex.is_delete == False).all()
 
     # 取出每个索引集下的会话集
     for i in index_data:
-        session_set = CorpusSessionIndex.query.filter(CorpusSessionIndex.index_id == i.id, CorpusData.is_delete == False).order_by(CorpusData.create_time.desc()).all()
+        print("index>> ", i.id, i.title)
+        session_set = CorpusSessionIndex.query.filter(CorpusSessionIndex.index_id == i.id, CorpusSessionIndex.is_delete == False).order_by(CorpusSessionIndex.create_time.desc()).all()
 
-        for i in session_set:
+        # 取出每个会话集下的数据
+        for s in session_set:
+
+            limit = []
+            history = []
+            validation_dataset = []
+            print("session>> ", s.id)
 
             # 获取会话集下的数据
-            data = CorpusData.query.filter(CorpusData.session_id == i.id, CorpusData.is_delete == False).all()
-            limit = []
+            data = CorpusData.query.filter(CorpusData.session_id == s.id, CorpusData.is_delete == False).order_by(CorpusData.create_time).all()
+            
+            for d in data:
+                if d.msg_type == 1:
+                    limit.append({
+                        "data": d.data
+                    })
 
-            for i in data:
-                limit.append({
-                    "data": i.data
-                })
+                if d.msg_type == 2:
+                    limit.append({
+                        "data": "EMOJI:" + d.emoji_file
+                    })
 
-            start, end = 0, 0
-            msg, history = [], []
+                    source_file = os.path.join(os.path.abspath('./app/static/msg_emoji/' ), d.emoji_file)
+                    target_file = os.path.join(os.path.abspath('./save/' + filename + '/msg_emoji/' ), d.emoji_file)
 
-            for i in range(len(limit)):
+                    shutil.copy2(source_file, target_file)
 
-                if int(len(limit))/2 == i:
-                    break
+                if d.msg_type == 3:
+                    limit.append({
+                        "data": "IMAGE:" + d.image_content
+                    })
 
-                if end == 0:
-                    start = i
-                    end = i + 2
+                    source_file = os.path.join(os.path.abspath('./app/static/msg_image/' ), d.image_file)
+                    target_file = os.path.join(os.path.abspath('./save/' + filename + '/msg_image/' ), d.image_file)
 
+                    shutil.copy2(source_file, target_file)
+
+            data = split_list_into_pairs(limit)
+
+            for i in range(len(data)):
+                if i == 0:
+                    validation_dataset.append([data[i][0]['data'], data[i][1]['data'], []])
                 else:
-                    start = start + 2
-                    end = start + 2
+                    validation_dataset.append([data[i][0]['data'], data[i][1]['data'], history[:]])
 
-                msgdata = {
-                        "prompt": limit[start:end][0]['data'],
-                        "response": limit[start:end][1]['data'],
-                        "history": history[0:i] if int(len(history)) > 0 else []
-                    }
+                history.append(data[i][0]['data'])
+                history.append(data[i][1]['data'])
+                
+            for v in validation_dataset:
+                out.append({
+                        "prompt": v[0],
+                        "response": v[1],
+                        "history": v[2]
+                    })
 
-                msg.append(msgdata)
+    
 
-                history.append([limit[start:end][0]['data'], limit[start:end][1]['data']])
+    with open('./save/' + filename + '/' + filename + '.json', 'w', encoding='utf-8') as json_file:
 
-                print(i, start, end, msgdata)
+        for o in out:
 
-            validation_dataset = validation_dataset + msg
-            
-
-    print(validation_dataset)
-    filename = datetime.datetime.strftime(datetime.datetime.now(), "corpus_%Y%m%d_%H%M%S") + '.json'
-
-    with open('./save/' + filename, 'w', encoding='utf-8') as json_file:
-
-        for i in validation_dataset:
-            
-            print(json.dumps(i))
-            json_file.write(json.dumps(i, ensure_ascii=False) + '\n')
-            # json.dump(json.dumps(i) + '\n', json_file)
+            print(o)
+            json_file.write(json.dumps(o, ensure_ascii=False) + '\n')
 
 
     return 200, 0, {}

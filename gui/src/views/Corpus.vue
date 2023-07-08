@@ -1,6 +1,20 @@
 <template>
   <div class="layout-width">
 
+    <div class="image_emoji_update_poput" v-if="SendEmojiPoput == true || sendImagePoput == true">
+      <input type="file" name="import_file" v-on:change="selectedFile($event)">
+      <div v-if="SendEmojiPoput == true">
+        <button @click="sendSessionEmoji(2)">send She</button>
+        <button @click="sendSessionEmoji(1)">send Me</button>
+        
+      </div>
+      <div v-if="sendImagePoput == true">
+        <input type="text" class="input" v-model="page1data.image_content">
+        <button @click="sendSessionImage(2)">send She</button>
+        <button @click="sendSessionImage(1)">send Me</button>
+      </div>
+    </div>
+
     <div class="createNewIndex" v-if="page0data.createNewIndexFromWindwos">
       <div class="title">input you new index name</div>
       <input type="text" class="input" v-model="page0data.createNewIndexFrom.text">
@@ -68,26 +82,42 @@
           </div>
           <div class="content">
               <div class="item" v-for="(item, index) in page1data.session" :key="index + 'page1session'">
-                <div v-if="item.questions_and_answers_type == 2">
-                  <div class="li">
-                    <div class="she">
-                      {{item.data}}
+
+                <div v-if="item.msg_type == 1">
+                  <div v-if="item.questions_and_answers_type == 2">
+                    <div class="sortl">{{index}}</div>
+                    <div class="li">
+                      <div class="she">
+                        {{item.data}}
+                      </div>
+                    </div>
+                    <div class="li">
+                      <div class="shesourcetext">{{item.source_msg_data}}</div>
                     </div>
                   </div>
-                  <div class="li">
-                    <div class="shesourcetext">{{item.source_msg_data}}</div>
-                  </div>
-                </div>
-                <div v-if="item.questions_and_answers_type == 1">
-                  <div class="li">
-                    <div class="me">
-                      {{item.data}}
+                  <div v-if="item.questions_and_answers_type == 1">
+                    <div class="sortr">{{index}}</div>
+                    <div class="li">
+                      <div class="me">
+                        {{item.data}}
+                      </div>
+                    </div>
+                    <div class="li">
+                      <div class="mesourcetext">{{item.source_msg_data}}</div>
                     </div>
                   </div>
-                  <div class="li">
-                    <div class="mesourcetext">{{item.source_msg_data}}</div>
                   </div>
-                </div>
+
+                  <div v-if="item.msg_type == 2">
+                    <div v-if="item.questions_and_answers_type == 1" class="emoji"><div class="sortr">{{index}}</div><div class="li"><img class="r" :src="item.path"></div></div>
+                    <div v-if="item.questions_and_answers_type == 2" class="emoji"><div class="sortl">{{index}}</div><div class="li"><img class="l" :src="item.path"></div></div>
+                  </div>
+
+                  <div v-if="item.msg_type == 3">
+                    <div v-if="item.questions_and_answers_type == 1" class="image"><div class="sortr">{{index}}</div><div class="li"><img class="r" :src="item.path"><div class="r">图意: {{item.image_content}}</div></div></div>
+                    <div v-if="item.questions_and_answers_type == 2" class="image"><div class="sortl">{{index}}</div><div class="li"><img class="l" :src="item.path"><div class="l">图意: {{item.image_content}}</div></div></div>
+                  </div>
+
               </div>
           </div>
           <div class="sumbit">
@@ -102,10 +132,10 @@
                 Session ID: {{page1data.sessionid}}    Data len: {{page1data.datacount}}
               </div>
               <div class="delete" @click="deleteSession">Click DeleteSession</div>
-              
-
               <div class="botton" style="background-color:#264AFF" @click="sendSession(1)">Sumbit  Me</div>
               <div class="botton" style="background-color:#FF006A" @click="sendSession(2)">Sumbit  She</div>
+              <div class="botton" style="background-color:#264AFF" @click="SendEmojiPoput = true">SendEmoji</div>
+              <div class="botton" style="background-color:#264AFF" @click="sendImagePoput = true">SendImage</div>
               <div class="botton" style="background-color:#FF006A" @click="Withdraw">Withdraw</div>
             </div>
           </div>
@@ -117,7 +147,7 @@
 
 <script>
 // @ is an alias to /src
-import { index_query, index_create, index_delete, session_query, session_create, data_query, data_create, data_withdraw, session_delete } from "@/api/common";
+import { upload, index_query, index_create, index_delete, session_query, session_create, data_query, data_text_create, data_emoji_create, data_image_create, data_withdraw, session_delete } from "@/api/common";
 export default {
   name: 'HomeView',
   components: {
@@ -127,6 +157,9 @@ export default {
   },
   data() {
     return {
+      SendEmojiPoput: false,
+      sendImagePoput: false,
+      file: null,
       pageIndex: 0,
       page0data:{
         deleteItem:null,
@@ -140,6 +173,7 @@ export default {
         selectIndexItem: null
       },
       page1data:{
+        image_content: "",
         createSessionWind: false,
         input: "",
         input_source_test: "",
@@ -233,7 +267,7 @@ export default {
       });
     },
     sendSession(questions_and_answers_type){
-      data_create({
+      data_text_create({
         session_id : this.page1data.selectSessionItem.id,
         questions_and_answers_type: questions_and_answers_type,
         data: this.page1data.input,
@@ -245,6 +279,59 @@ export default {
           this.getSessionData(this.page1data.selectSessionItem)
         }
       });
+    },
+    sendSessionEmoji(questions_and_answers_type){
+      const formData = new FormData();
+      formData.append("file", this.file);
+      formData.append("uploadKey", 'emoji');
+      this.$http(upload(formData), (res) => {
+        console.log(res)
+        if (res.code == 200) {
+
+          data_emoji_create({
+                session_id : this.page1data.selectSessionItem.id,
+                questions_and_answers_type: questions_and_answers_type,
+                storagefile_name: res.data.filename
+          }).then((res) => {
+            if (res.code == 200){
+              this.sendImagePoput = false
+              this.SendEmojiPoput = false
+                this.file = null
+                this.getSessionData(this.page1data.selectSessionItem)
+            }
+          });
+
+        }
+      })
+    },
+    sendSessionImage(questions_and_answers_type){
+      const formData = new FormData();
+      formData.append("file", this.file);
+      formData.append("uploadKey", 'image');
+      this.$http(upload(formData), (res) => {
+        console.log(res)
+        if (res.code == 200) {
+
+          data_image_create({
+            session_id : this.page1data.selectSessionItem.id,
+            questions_and_answers_type: questions_and_answers_type,
+            storagefile_name: res.data.filename,
+            image_content: this.page1data.image_content
+          }).then((res) => {
+            if (res.code == 200){
+              this.sendImagePoput = false
+              this.SendEmojiPoput = false
+              this.page1data.image_content = ""
+              this.file = null
+              this.getSessionData(this.page1data.selectSessionItem)
+            }
+          });
+
+        }
+      })
+    },
+    selectedFile(event) {
+      this.file = event.target.files[0]
     },
     deleteSession(){
       session_delete({
@@ -269,6 +356,25 @@ export default {
 }
 </script>
 <style rel="stylesheet/scss" lang="scss" scoped>
+.image_emoji_update_poput{
+  position: absolute;
+  z-index: 9999;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 40%;
+  height: 50vh;
+  background-color: #000000;
+  input{
+    color: #ffffff;
+    padding: 35px;
+  }
+  button{
+    margin: 35px;
+  }
+}
 .aside{
   width: 100%;
   height: calc(100vh - 116px);
@@ -519,6 +625,60 @@ export default {
           padding-top: 6px;
           color: #a3a3a3;
           float: right;
+        }
+        .sortl{
+          margin-right: 25px;
+          float: left;
+          border-radius: 50px;
+          width: 40px;
+          height: 40px;
+          color: #ffffff;
+          font-size: 14px;
+          line-height: 40px;
+          text-align: center;
+          background-color: #0059ff96;
+        }
+        .sortr{
+          margin-left: 25px;
+          float: right;
+          border-radius: 50px;
+          width: 40px;
+          height: 40px;
+          color: #ffffff;
+          font-size: 14px;
+          line-height: 40px;
+          text-align: center;
+          background-color: #0059ff96;
+        }
+        .image{
+          img{
+            max-width: 20%;
+            min-width: 10%;
+          }
+          .l{
+            text-align: left;
+            float: left;
+            margin-right: 15px;
+            width: 40%;
+          }
+          .r{
+            text-align: right;
+            float: right;
+            margin-left: 15px;
+            width: 40%;
+          }
+        }
+        .emoji{
+          img{
+            max-width: 10%;
+            min-width: 5%;
+          }
+          .l{
+            float: left;
+          }
+          .r{
+            float: right;
+          }
         }
       }
     }

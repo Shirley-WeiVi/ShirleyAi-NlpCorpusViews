@@ -97,13 +97,30 @@ class CorpusData(BaseModel, db.Model):
     data = db.Column(db.Text)                                       # 内容
     source_msg_data = db.Column(db.Text)                            # 内容
     questions_and_answers_type = db.Column(db.Integer)              # 1 是问 2是答
+    image_file = db.Column(db.Text)                                 # image_file
+    image_content = db.Column(db.Text)                              # image_内容
+    emoji_file = db.Column(db.Text)                                 # emoji_file
+    msg_type = db.Column(db.Integer)                                # 1 文本 2 表情包 3 图片
 
     def _toDict_ManageViews(self):
+
+        if self.msg_type == 2:
+            path = self._static_loadpath() + self._static_fileupload_path({2:'emoji',3:'image'}[self.msg_type]) + self.emoji_file
+        
+        elif self.msg_type == 3:
+            path = self._static_loadpath() + self._static_fileupload_path({2:'emoji',3:'image'}[self.msg_type]) + self.image_file
+
+        else:
+            path = ""
+
         return dict(
+            msg_type = self.msg_type,
             data = self.data,
             id = self.id,
             questions_and_answers_type = self.questions_and_answers_type,
-            source_msg_data = self.source_msg_data
+            source_msg_data = self.source_msg_data,
+            image_content = self.image_content,
+            path = path
         )
 
 class Audio(BaseModel, db.Model):
