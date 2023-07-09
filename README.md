@@ -8,11 +8,18 @@
   演示视频:
   https://www.bilibili.com/video/BV1Wk4y1P76W/
 
+
+  新功能演示: 
+  https://www.bilibili.com/video/BV1U14y1R7pQ
+
 ### 功能说明
 
 1.管理对话（增删查改）<br>
 2.导出数据集接口，可二次开发定义自己的数据集导出类型<br>
 3.基于数据库储存<br>
+4.新增音频管理功能
+5.新增表情包发送
+6.新增图片发送
 
 ### 现有功能设计
 
